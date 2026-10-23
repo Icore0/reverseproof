@@ -13,6 +13,7 @@ Zero dependencies. Node ≥ 20. Honest about limits: read [docs/VERDICT.md](docs
 | `src/server/token.js` | Short-lived tokens, per-session request signing, replay guard. A cloned client can't mint tokens; a captured request can't be replayed. | `test/server.test.js` |
 | `src/server/canary.js` | Stateless honeytokens + middleware: fake keys in your client; any use trips an alert. | `test/server.test.js` |
 | `src/server/watermark.js` | Per-recipient invisible text mark to trace leaks (weak by design, documented). | `test/server.test.js` |
+| `src/server/guard.js` | Per-token/per-user quotas and output coarsening against black-box cloning of your API. | `test/extraction.test.js` (shows what it stops and what Sybil accounts defeat) |
 | `templates/` | Electron fuse flipper (afterPack), JS obfuscator config, Rust/Go release builds, macOS sign + hardened runtime + empty entitlements, nginx sourcemap block, Express wiring example. | syntax-checked |
 | `examples/toy` + `test/toy.test.js` | A toy app built 5 ways and attacked with `strings`, `nm`, an XOR crib and lldb. The evidence behind the verdict. | `test/toy.test.js` |
 

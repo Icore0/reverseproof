@@ -43,6 +43,18 @@ a signed UI shell with no secrets, whose network calls are bound to short-lived 
 Move value server-side (`src/server/token.js`, `templates/server/express-example.js`). Reverse engineering the client then yields an
 API schema, not your product. Everything else in this repo exists to protect the part you could not move.
 
+### What survives even a server-side design: black-box extraction (`test/extraction.test.js`)
+If the logic is on your server, reading the client reveals nothing about it. The attacker's remaining move is to query your API from a valid account and fit a clone. Measured on a hidden 5-weight scoring model:
+
+| API behaviour | Attacker result |
+|---|---|
+| open, full-precision outputs | **exact clone after 5 queries** |
+| outputs coarsened (step 5), no limits | weights within 0.35 after 5,000 queries (~10% accurate) |
+| + 50-query quota per account | capped at 50 queries; clone error 0.74 (**>2x worse**) |
+| attacker opens 100 fake accounts | back to 0.35: quotas fall to Sybil accounts |
+
+Takeaway: expose the least precision the product needs, cap queries per identity, and make identities expensive (attestation, payment, phone/ID verification). That is a real defence for logic, but it is a cost wall, not a proof.
+
 ## Things this repo's modules cannot do (read before relying on them)
 - **Token/nonce signing** proves a request came from a client holding a *current session key*. A user running the genuine client holds one. Without real device attestation (App Attest / Play Integrity / Turnstile) a patient attacker automating the real client still gets through. Add attestation + server-side behavioural limits.
 - **Canaries** only detect an attacker who *uses* what they found against your server.
