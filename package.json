@@ -1,0 +1,10 @@
+{
+  "name": "reverseproof",
+  "version": "0.1.0",
+  "description": "Make shipped apps expensive to reverse-engineer: an artifact auditor, server-side token/canary/watermark modules, and hardening templates. Honest about its limits.",
+  "license": "MIT",
+  "bin": { "reverseproof": "bin/reverseproof.js" },
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node --test \"test/*.test.js\"" },
+  "files": ["bin", "src", "templates", "docs"]
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Deliberately EMPTY. Do not add get-task-allow, cs.disable-library-validation,
+       cs.allow-dyld-environment-variables or cs.debugger in release builds: each one re-opens
+       a door the hardened runtime closes. Electron apps additionally need cs.allow-jit. -->
+</dict>
+</plist>

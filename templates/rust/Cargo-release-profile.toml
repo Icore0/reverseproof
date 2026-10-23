@@ -1,0 +1,10 @@
+# Append to Cargo.toml
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"   # no unwinding tables / fewer panic strings
+strip = true      # symbols + debuginfo
+debug = false
+# Also build with:  RUSTFLAGS="--remap-path-prefix=$HOME=~ --remap-path-prefix=$(pwd)=src"
+# and do NOT use `cargo auditable` for release if the dependency list is sensitive.
