@@ -1,7 +1,15 @@
-# JS obfuscation notes
-Use with `npx javascript-obfuscator dist --config templates/js/obfuscator.config.json`.
-- Apply to the few modules that matter, not the whole bundle: control-flow flattening costs 15-100%+ runtime.
-- `seed: 0` = random per build. Keep it random so release-to-release diffs are noisy.
-- Never ship `.map` files. Verify: `npx reverseproof scan dist`.
-- For Electron main-process code, prefer bytecode: `npx bytenode -c main.js` and load the `.jsc` from a tiny stub.
-- Obfuscated JS is still JS: it runs in a runtime the attacker controls. It slows reading, it does not prevent it.
+# JS hardening notes (every claim here is measured: `cd experiments/js && npm install && npm test`)
+
+Profiles for `npx javascript-obfuscator dist --config <file>`:
+- `obfuscator.light.json`: string-array encoding only. Hides string literals from grep/`strings`.
+- `obfuscator.heavy.json`: adds control-flow flattening + dead code. Hides more structure, **costs far more CPU**.
+
+Measured on a mixed arithmetic + string-constant workload: heavy ~52x slower, light ~12x slower (cost is dominated by
+string lookups in hot loops). Apply to cold, sensitive modules only. Never to hot paths.
+
+What it does and does not do:
+- Obfuscation hides literals from `grep`. A runtime hook (`fetch`, `http.request`, a debugger) still reads the secret as it is used. Tested.
+- **Bytecode (bytenode) does NOT hide strings.** String literals sit in the `.jsc` in plaintext. Tested. It makes logic harder to read,
+  not secrets harder to find. Combine with moving the secret server-side, not with hope.
+- Never ship `.map` files. `npx reverseproof scan dist` checks.
+- Keep `seed` random per build so release-to-release diffs stay noisy.

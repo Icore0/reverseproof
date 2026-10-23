@@ -43,6 +43,19 @@ a signed UI shell with no secrets, whose network calls are bound to short-lived 
 Move value server-side (`src/server/token.js`, `templates/server/express-example.js`). Reverse engineering the client then yields an
 API schema, not your product. Everything else in this repo exists to protect the part you could not move.
 
+### JavaScript / Electron (`experiments/js`, re-run in CI)
+Same secret, same attacker. The attacker's whole toolkit is a 4-line preload that records what the app sends.
+
+| Build | `grep` for the secret | runtime hook (`node -r hook.js`) | CPU cost (mixed workload) |
+|---|---|---|---|
+| plain | found | **found** | 1x |
+| obfuscated, light (string array) | not found | **found** | ~12x |
+| obfuscated, heavy (control-flow + dead code) | not found | **found** | ~52x |
+| bytenode bytecode | **found** (strings stay plaintext in `.jsc`) | **found** | ~1x |
+
+Obfuscation defeats `grep` and nothing else; bytecode does not even defeat `grep`. Neither stops observing a call as it happens.
+(An earlier version of this repo's template implied bytecode protects secrets. The experiment disproved it; the template was corrected.)
+
 ### What survives even a server-side design: black-box extraction (`test/extraction.test.js`)
 If the logic is on your server, reading the client reveals nothing about it. The attacker's remaining move is to query your API from a valid account and fit a clone. Measured on a hidden 5-weight scoring model:
 

@@ -1,0 +1,12 @@
+{
+  "compact": true,
+  "stringArray": true,
+  "stringArrayEncoding": ["base64"],
+  "stringArrayThreshold": 1,
+  "identifierNamesGenerator": "hexadecimal",
+  "controlFlowFlattening": false,
+  "deadCodeInjection": false,
+  "splitStrings": false,
+  "renameGlobals": false,
+  "sourceMap": false
+}
