@@ -1,0 +1,11 @@
+name: reverseproof scan
+description: Audit a build output for what a reverse engineer gets for free (sourcemaps, secrets, weak Electron/macOS hardening). Fails on HIGH findings.
+inputs:
+  path:
+    description: Path to the app, dist folder, or binary to scan
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: node "$GITHUB_ACTION_PATH/bin/reverseproof.js" scan "${{ inputs.path }}"

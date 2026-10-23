@@ -3,7 +3,9 @@
 Raise the cost of reverse-engineering your app, and make a stolen client worthless.
 Zero dependencies. Node ≥ 20. Honest about limits: read [docs/VERDICT.md](docs/VERDICT.md) first.
 
-> **It will not make reverse engineering impossible, and no tool can.** It audits what you ship, closes the cheap doors, and gives you server-side pieces that make extraction pointless.
+> **It cannot make reverse engineering impossible, and no tool can.** Anything running on a user's device can eventually be read.
+> reverseproof (1) audits what you ship, (2) closes the cheap doors, (3) gives you server-side pieces so that a stolen client is worthless,
+> and (4) measures every claim by attacking itself. If a tool promises "unbreakable", it is lying to you.
 
 ## What's inside
 
@@ -20,9 +22,18 @@ Zero dependencies. Node ≥ 20. Honest about limits: read [docs/VERDICT.md](docs
 ## Use
 
 ```bash
-npx reverseproof scan "/path/to/YourApp.app"     # or a dist/ folder, or a single binary
-npx reverseproof scan dist --json                # for CI; exit code 1 if any HIGH
-npm test                                         # unit tests + the attack experiments (macOS arm64 for the toy tests)
+npx github:Icore0/reverseproof scan "/path/to/YourApp.app"   # or a dist/ folder, or a single binary
+npx github:Icore0/reverseproof scan dist --json              # exit code 1 if any HIGH finding
+git clone https://github.com/Icore0/reverseproof && cd reverseproof && npm test
+```
+
+GitHub Actions (fails the build on high findings):
+
+```yaml
+- uses: actions/checkout@v4
+- run: npm run build
+- uses: Icore0/reverseproof@main
+  with: { path: dist }
 ```
 
 Server side:
