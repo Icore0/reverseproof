@@ -1,18 +1,21 @@
 # reverseproof
 
-Raise the cost of reverse-engineering your app, and make a stolen client worthless.
-Zero dependencies. Node ≥ 20. Honest about limits: read [docs/VERDICT.md](docs/VERDICT.md) first.
+Find the leaks that make your app easy to reverse-engineer, raise the cost of cloning it, and make a stolen client worthless.
+Zero dependencies. Node ≥ 20. Every claim here is tested by attacking it. Read [docs/VERDICT.md](docs/VERDICT.md) for the evidence.
 
 > **It cannot make reverse engineering impossible, and no tool can.** Anything running on a user's device can eventually be read.
 > reverseproof (1) audits what you ship, (2) closes the cheap doors, (3) gives you server-side pieces so that a stolen client is worthless,
 > and (4) measures every claim by attacking itself. If a tool promises "unbreakable", it is lying to you.
+
+**Status: early (v0.1).** Built and tested on macOS with CI on Linux and macOS. Not yet reviewed by outside security engineers. Not covered: Android/iOS packages,
+Tauri/Flutter/React Native, server/cloud compromise, phishing, insiders. See [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md). Not a substitute for a pentest.
 
 ## What's inside
 
 | Part | What it does | Tested by |
 |---|---|---|
 | `reverseproof scan <app\|dir\|binary>` | Finds what a reverse engineer gets for free: shipped/inline sourcemaps, secrets in text/ASAR/binaries, Electron fuse state, missing ASAR integrity, macOS hardened-runtime / dangerous entitlements / symbols, **Windows PE (ASLR, DEP, CFG, signing, debug info, .NET)**, **Linux ELF (PIE, RELRO, NX stack, canary, symbols)**, Go & Rust metadata. Exits 1 on high findings (use in CI). | `test/scan.test.js`, `test/binary.test.js`; PE/ELF parsers validated against real esbuild win32/linux binaries with llvm-objdump |
-| `reverseproof audit <repo>` | Supply-chain and repo hygiene: lockfiles, unpinned deps, `curl | sh` scripts, unpinned GitHub Actions, `pull_request_target` pwn-requests, workflow script injection, committed `.env`/keys, **secrets that were deleted but still live in git history**. `.reverseproofignore` for intentional fixtures. Runs on this repo in CI. | `test/audit.test.js` |
+| `reverseproof audit <repo>` | Supply-chain and repo hygiene: lockfiles, unpinned deps, `curl \| sh` scripts, unpinned GitHub Actions, `pull_request_target` pwn-requests, workflow script injection, committed `.env`/keys, **secrets that were deleted but still live in git history**. `.reverseproofignore` for intentional fixtures. Runs on this repo in CI. | `test/audit.test.js` |
 | `src/server/token.js` | Short-lived tokens, per-session request signing, replay guard. A cloned client can't mint tokens; a captured request can't be replayed. | `test/server.test.js` |
 | `src/server/canary.js` | Stateless honeytokens + middleware: fake keys in your client; any use trips an alert. | `test/server.test.js` |
 | `src/server/watermark.js` | Per-recipient invisible text mark to trace leaks (weak by design, documented). | `test/server.test.js` |

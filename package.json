@@ -3,8 +3,38 @@
   "version": "0.1.0",
   "description": "Make shipped apps expensive to reverse-engineer: an artifact auditor, server-side token/canary/watermark modules, and hardening templates. Honest about its limits.",
   "license": "MIT",
-  "bin": { "reverseproof": "bin/reverseproof.js" },
-  "engines": { "node": ">=20" },
-  "scripts": { "test": "node --test \"test/*.test.js\"" },
-  "files": ["bin", "src", "templates", "docs"]
+  "bin": {
+    "reverseproof": "bin/reverseproof.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\""
+  },
+  "files": [
+    "bin",
+    "src",
+    "templates",
+    "docs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Icore0/reverseproof.git"
+  },
+  "homepage": "https://github.com/Icore0/reverseproof#readme",
+  "bugs": {
+    "url": "https://github.com/Icore0/reverseproof/issues"
+  },
+  "keywords": [
+    "security",
+    "reverse-engineering",
+    "anti-reverse-engineering",
+    "electron",
+    "appsec",
+    "supply-chain",
+    "sourcemap",
+    "secrets-scanning",
+    "hardening"
+  ]
 }
