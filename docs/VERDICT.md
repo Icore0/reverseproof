@@ -46,7 +46,7 @@ API schema, not your product. Everything else in this repo exists to protect the
 ### JavaScript / Electron (`experiments/js`, re-run in CI)
 Same secret, same attacker. The attacker's whole toolkit is a 4-line preload that records what the app sends.
 
-| Build | `grep` for the secret | runtime hook (`node -r hook.js`) | CPU cost (mixed workload) |
+| Build | `grep` for the secret | runtime hook (`node -r hook.js`) | CPU cost (mixed workload, one Apple-silicon machine; varies by hardware) |
 |---|---|---|---|
 | plain | found | **found** | 1x |
 | obfuscated, light (string array) | not found | **found** | ~12x |

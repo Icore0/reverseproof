@@ -73,5 +73,5 @@ test('cost: slowdown of each profile on a CPU-bound workload (informational)', o
   const b = Math.min(time(obf), time(obf));
   const c = Math.min(time(lt), time(lt));
   console.log(`  [cost] plain ${a.toFixed(0)}ms | heavy ${b.toFixed(0)}ms (x${(b / a).toFixed(1)}) | light ${c.toFixed(0)}ms (x${(c / a).toFixed(1)})`);
-  assert.ok(b > c, 'heavy profile costs more than light');
+  assert.ok(a > 0 && b > 0 && c > 0, 'all workloads ran'); // timing is machine-dependent: report it, never gate on it
 });

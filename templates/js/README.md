@@ -4,7 +4,7 @@ Profiles for `npx javascript-obfuscator dist --config <file>`:
 - `obfuscator.light.json`: string-array encoding only. Hides string literals from grep/`strings`.
 - `obfuscator.heavy.json`: adds control-flow flattening + dead code. Hides more structure, **costs far more CPU**.
 
-Measured on a mixed arithmetic + string-constant workload: heavy ~52x slower, light ~12x slower (cost is dominated by
+Measured once on one Apple-silicon machine (a mixed arithmetic + string-constant workload; your numbers will differ, run the experiment): heavy ~52x slower, light ~12x slower (cost is dominated by
 string lookups in hot loops). Apply to cold, sensitive modules only. Never to hot paths.
 
 What it does and does not do:
