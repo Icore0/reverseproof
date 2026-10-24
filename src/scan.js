@@ -3,6 +3,7 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
+const { inspectPE, inspectELF } = require('./binary');
 
 const SENTINEL = Buffer.from('dL7pKGdnNz796PbbjQWNKmHXBZaB9tsX');
 // Order of the Electron "V1" fuse wire (see @electron/fuses).
@@ -282,6 +283,14 @@ function scan(target, opts = {}) {
       }
     }
     // Only the app's own top-level plist, and only if it actually ships an app.asar.
+    if ((ext === '' || ['.exe', '.dll', '.sys', '.node', '.so'].includes(ext)) && size >= 64 && size < 500 * 1024 * 1024) {
+      let magic = '';
+      try { const fd = fs.openSync(p, 'r'); const b = Buffer.alloc(4); fs.readSync(fd, b, 0, 4, 0); fs.closeSync(fd); magic = b.toString('hex'); } catch { /* unreadable */ }
+      try {
+        if (magic.startsWith('4d5a')) out.push(...(inspectPE(p)?.findings || []));
+        else if (magic === '7f454c46') out.push(...(inspectELF(p, { hasMarker: (n) => findInFile(p, Buffer.from(n, 'latin1')) >= 0 })?.findings || []));
+      } catch { /* truncated or malformed binary */ }
+    }
     if (base === 'Info.plist' && /\.app\/Contents\/Info\.plist$/.test(p) && fs.existsSync(path.join(path.dirname(p), 'Resources', 'app.asar'))) {
       if (!fs.readFileSync(p, 'utf8').includes('ElectronAsarIntegrity')) {
         out.push(finding('medium', 'asar-integrity-missing', p, 'Info.plist has no ElectronAsarIntegrity entry: app.asar can be swapped undetected.', 'Package with @electron/packager / electron-builder ASAR integrity enabled.'));

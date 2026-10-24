@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 'use strict';
 const { scan } = require('../src/scan');
+const { audit, applyIgnore } = require('../src/audit');
 
 const args = process.argv.slice(2);
 const json = args.includes('--json');
 const all = args.includes('--all');
-const target = args.find((a) => !a.startsWith('--') && a !== 'scan');
+const cmd = args.includes('audit') ? 'audit' : 'scan';
+const target = args.find((a) => !a.startsWith('--') && a !== 'scan' && a !== 'audit');
 if (!target) {
-  console.error('usage: reverseproof scan <path-to-app|dir|binary> [--json] [--all]');
+  console.error('usage: reverseproof scan <path-to-app|dir|binary> [--json] [--all]\n       reverseproof audit <repo-dir> [--json]');
   process.exit(2);
 }
-const findings = scan(target, { all });
+const findings = applyIgnore(cmd === 'audit' ? audit(target) : scan(target, { all }), target);
 if (json) {
   console.log(JSON.stringify(findings, null, 2));
 } else {

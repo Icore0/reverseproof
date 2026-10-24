@@ -1,0 +1,5 @@
+# Intentional dummy secrets used as attack fixtures (not real credentials).
+test/
+examples/toy/
+experiments/js/app.js
+experiments/js/run.test.js

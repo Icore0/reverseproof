@@ -72,6 +72,8 @@ Takeaway: expose the least precision the product needs, cap queries per identity
 - **Token/nonce signing** proves a request came from a client holding a *current session key*. A user running the genuine client holds one. Without real device attestation (App Attest / Play Integrity / Turnstile) a patient attacker automating the real client still gets through. Add attestation + server-side behavioural limits.
 - **Canaries** only detect an attacker who *uses* what they found against your server.
 - **Watermark** (`watermark.js`) is an invisible-character mark; one regex strips it (there is a test asserting exactly that). It catches careless leaks.
+- **Abuse scoring** (`abuse.js`) is heuristic. A stealth bot with random timing and ids scored 'allow' in the test; residential-proxy fleets and rotating identities defeat per-identity analysis. Clustering by an expensive-to-rotate fingerprint is the stronger signal.
+- **Binary checks** read headers only (PE/ELF flags, signatures, symbols); they do not judge code quality, and PE/ELF were validated on two real binaries plus synthetic fixtures. Mach-O checks use `codesign`/`nm` and run on macOS only.
 - **Scanner** is heuristic. On vendored libraries it flags test keys (e.g. an SSH library's built-in probe key); triage findings, don't trust them blindly. It covers Electron fuses/ASAR, sourcemaps, secrets in text and binaries, macOS signing/entitlements/symbols, Go/Rust metadata. It does not analyse obfuscation quality, Windows/Linux signing, or Android/iOS packages.
 - **Not covered:** hardware attacks, a malicious OS, a user with unlimited time. Offline software with no server has a hard ceiling.
 

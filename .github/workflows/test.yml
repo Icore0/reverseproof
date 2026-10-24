@@ -1,5 +1,7 @@
 name: test
 on: [push, pull_request]
+permissions:
+  contents: read
 jobs:
   test:
     strategy:
@@ -7,9 +9,11 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 22 }
       - run: npm test
       - run: npm install --no-audit --no-fund && npm test
         working-directory: experiments/js
+      - name: dogfood (this repo must pass its own checks)
+        run: node bin/reverseproof.js audit . && node bin/reverseproof.js scan .

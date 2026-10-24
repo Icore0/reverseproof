@@ -11,20 +11,26 @@ Zero dependencies. Node ≥ 20. Honest about limits: read [docs/VERDICT.md](docs
 
 | Part | What it does | Tested by |
 |---|---|---|
-| `reverseproof scan <app\|dir\|binary>` | Finds what a reverse engineer gets for free: shipped/inline sourcemaps, secrets in text/ASAR/binaries, Electron fuse state, missing ASAR integrity, macOS hardened-runtime / dangerous entitlements / symbols, Go & Rust metadata. Exits 1 on high findings (use in CI). | `test/scan.test.js`, real Electron apps |
+| `reverseproof scan <app\|dir\|binary>` | Finds what a reverse engineer gets for free: shipped/inline sourcemaps, secrets in text/ASAR/binaries, Electron fuse state, missing ASAR integrity, macOS hardened-runtime / dangerous entitlements / symbols, **Windows PE (ASLR, DEP, CFG, signing, debug info, .NET)**, **Linux ELF (PIE, RELRO, NX stack, canary, symbols)**, Go & Rust metadata. Exits 1 on high findings (use in CI). | `test/scan.test.js`, `test/binary.test.js`; PE/ELF parsers validated against real esbuild win32/linux binaries with llvm-objdump |
+| `reverseproof audit <repo>` | Supply-chain and repo hygiene: lockfiles, unpinned deps, `curl | sh` scripts, unpinned GitHub Actions, `pull_request_target` pwn-requests, workflow script injection, committed `.env`/keys, **secrets that were deleted but still live in git history**. `.reverseproofignore` for intentional fixtures. Runs on this repo in CI. | `test/audit.test.js` |
 | `src/server/token.js` | Short-lived tokens, per-session request signing, replay guard. A cloned client can't mint tokens; a captured request can't be replayed. | `test/server.test.js` |
 | `src/server/canary.js` | Stateless honeytokens + middleware: fake keys in your client; any use trips an alert. | `test/server.test.js` |
 | `src/server/watermark.js` | Per-recipient invisible text mark to trace leaks (weak by design, documented). | `test/server.test.js` |
+| `src/server/abuse.js` | Scraping/enumeration scoring (rate, timing regularity, sequential ids, crawl pattern) and Sybil clustering by fingerprint. Heuristic; a stealth-bot test documents what it misses. | `test/abuse.test.js` |
 | `src/server/guard.js` | Per-token/per-user quotas and output coarsening against black-box cloning of your API. | `test/extraction.test.js` (shows what it stops and what Sybil accounts defeat) |
 | `templates/` | Electron fuse flipper (afterPack), JS obfuscator config, Rust/Go release builds, macOS sign + hardened runtime + empty entitlements, nginx sourcemap block, Express wiring example. | syntax-checked |
 | `experiments/js` | Measures what JS obfuscation and bytenode really hide, and what they cost. | `cd experiments/js && npm i && npm test` (also in CI) |
 | `examples/toy` + `test/toy.test.js` | A toy app built 5 ways and attacked with `strings`, `nm`, an XOR crib and lldb. The evidence behind the verdict. | `test/toy.test.js` |
+
+## Before you rely on any of this
+Write a threat model first: [docs/THREAT-MODEL.md](docs/THREAT-MODEL.md) lists what this repo covers and, more importantly, what it does not (server compromise, phishing, insiders, vendors, unknown vulnerabilities).
 
 ## Use
 
 ```bash
 npx github:Icore0/reverseproof scan "/path/to/YourApp.app"   # or a dist/ folder, or a single binary
 npx github:Icore0/reverseproof scan dist --json              # exit code 1 if any HIGH finding
+npx github:Icore0/reverseproof audit .                       # repo / supply-chain hygiene
 git clone https://github.com/Icore0/reverseproof && cd reverseproof && npm test
 ```
 
